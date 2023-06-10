@@ -4,6 +4,7 @@ postgresql:
   auth:
     database: "wlosiara-pl-users-service"
     username: "wlosiara-pl-users-service"
+    password: null # required
   primary:
     initdb:
       scripts-configmap: "wlosiara-pl-users-service-initdb-scripts"
