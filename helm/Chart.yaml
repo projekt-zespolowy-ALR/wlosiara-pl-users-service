@@ -5,9 +5,9 @@ icon: https://cdn.discordapp.com/attachments/1028608205229666398/106345992404834
 
 type: application
 
-version: 0.2.2
+version: 0.2.3
 
-appVersion: "0.2.2"
+appVersion: "0.2.3"
 
 dependencies:
   - name: postgresql
