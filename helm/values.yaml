@@ -12,6 +12,8 @@ postgresql:
       requests:
         cpu: "50m"
         memory: "128Mi"
+    persistence:
+      size: "1Gi"
 
 image:
   dockerRegistry:
