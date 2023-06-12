@@ -2,12 +2,14 @@ port: 3000
 
 postgresql:
   auth:
-    database: "wlosiara-pl-users-service"
+    database: "postgres"
     username: "wlosiara-pl-users-service"
     password: null # required
   primary:
     initdb:
       scripts-configmap: "wlosiara-pl-users-service-initdb-scripts"
+      user: "wlosiara-pl-users-service"
+      password: null # required
     resources:
       requests:
         cpu: "50m"
