@@ -7,6 +7,7 @@ import {
 	Param,
 	ParseUUIDPipe,
 	Post,
+	Put,
 	Query,
 	ValidationPipe,
 } from "@nestjs/common";
@@ -17,6 +18,7 @@ import type User from "./User.js";
 import UsersServiceUserWithGivenIdNotFoundError from "../users_service/UsersServiceUserWithGivenIdNotFoundError.js";
 import CreateUserRequestBody from "./CreateUserRequestBody.js";
 import payloadifyCreateUserRequestBody from "./payloadifyCreateUserRequestBody.js";
+import type {EditUserRequestBody} from "./EditUserRequestBody.js";
 
 @Controller("/")
 export default class UsersController {
@@ -93,5 +95,32 @@ export default class UsersController {
 			}
 			throw error;
 		}
+	}
+	@Put("/users/:userId")
+	public async updateUser(
+		@Param(
+			"userId",
+			new ParseUUIDPipe({
+				version: "4",
+			})
+		)
+		userId: string,
+		@Body(
+			new ValidationPipe({
+				transform: true, // Transform to instance of CreateCatRequestBody
+
+				// Do not allow other properties than those defined in CreateCatRequestBody
+				whitelist: true,
+
+				// Throw an error if other properties than those defined in CreateCatRequestBody are present
+				forbidNonWhitelisted: true,
+			})
+		)
+		editUserRequestBody: EditUserRequestBody
+	): Promise<User> {
+		return await this.usersService.updateUser(
+			userId,
+			payloadifyCreateUserRequestBody(editUserRequestBody)
+		);
 	}
 }

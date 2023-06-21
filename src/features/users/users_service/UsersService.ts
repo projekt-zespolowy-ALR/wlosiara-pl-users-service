@@ -9,6 +9,7 @@ import type User from "../users_controller/User.js";
 import deentityifyUserEntity from "./deentityifyUserEntity.js";
 import type CreateUserPayload from "./CreateUserPayload.js";
 import UsersServiceUserWithGivenIdNotFoundError from "./UsersServiceUserWithGivenIdNotFoundError.js";
+import type {EditUserPayload} from "./EditUserPayload.js";
 
 @Injectable()
 export default class UsersService {
@@ -45,5 +46,10 @@ export default class UsersService {
 			}
 			throw error;
 		}
+	}
+	public async updateUser(userId: string, arg1: EditUserPayload): Promise<User> {
+		const editUserPayload = arg1;
+		await this.usersRepository.update(userId, editUserPayload);
+		return deentityifyUserEntity(await this.usersRepository.findOneByOrFail({id: userId}));
 	}
 }
