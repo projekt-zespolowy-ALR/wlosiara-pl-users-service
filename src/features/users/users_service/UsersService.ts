@@ -34,4 +34,16 @@ export default class UsersService {
 	public async createUser(createUserPayload: CreateUserPayload): Promise<User> {
 		return deentityifyUserEntity(await this.usersRepository.save(createUserPayload));
 	}
+
+	public async deleteUserById(id: string): Promise<boolean> {
+		try {
+			await this.usersRepository.delete({id});
+			return true;
+		} catch (error) {
+			if (error instanceof EntityNotFoundError) {
+				throw new UsersServiceUserWithGivenIdNotFoundError(id);
+			}
+			throw error;
+		}
+	}
 }
