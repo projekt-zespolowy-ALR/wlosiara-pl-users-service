@@ -35,7 +35,7 @@ describe("UsersModule", () => {
 			.withDatabase(testsConfig.TESTS_POSTGRESQL_CONTAINER_DATABASE_NAME)
 			.start();
 
-		const a = await postgresqlContainer.exec([
+		await postgresqlContainer.exec([
 			"psql",
 			`--host=localhost`,
 			`--port=5432`,

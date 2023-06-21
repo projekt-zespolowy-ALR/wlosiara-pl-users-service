@@ -20,7 +20,6 @@ import CreateUserRequestBody from "./CreateUserRequestBody.js";
 import payloadifyCreateUserRequestBody from "./payloadifyCreateUserRequestBody.js";
 import {EditUserRequestBody} from "./EditUserRequestBody.js";
 import SetUserHairTypeRequestBody from "./SetUserHairTypeRequestBody.js";
-import type UserHairTypeEntity from "../users_service/UserHairTypeEntity.js";
 
 @Controller("/")
 export default class UsersController {
