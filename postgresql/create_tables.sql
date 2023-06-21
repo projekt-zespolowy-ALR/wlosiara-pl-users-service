@@ -5,4 +5,13 @@ CREATE TABLE users (
     username TEXT NOT NULL,
 	avatar_url TEXT NOT NULL,
 	PRIMARY KEY (id)
-)
+);
+
+CREATE TABLE user_hair_types (
+    id UUID DEFAULT uuid_generate_v4() NOT NULL,
+    user_id UUID NOT NULL,
+    hair_type TEXT NOT NULL,
+    is_public BOOLEAN NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
