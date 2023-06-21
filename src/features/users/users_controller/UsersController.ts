@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	Delete,
 	NotFoundException,
 	Param,
 	ParseUUIDPipe,
@@ -71,5 +72,26 @@ export default class UsersController {
 		return await this.usersService.createUser(
 			payloadifyCreateUserRequestBody(createUserRequestBody)
 		);
+	}
+
+	@Delete("/users/:userId")
+	public async deleteUserById(
+		@Param(
+			"userId",
+			new ParseUUIDPipe({
+				version: "4",
+			})
+		)
+		userId: string
+	): Promise<boolean> {
+		try {
+			const targetUser = await this.usersService.deleteUserById(userId);
+			return targetUser;
+		} catch (error) {
+			if (error instanceof UsersServiceUserWithGivenIdNotFoundError) {
+				throw new NotFoundException(`User with id "${userId}" not found`);
+			}
+			throw error;
+		}
 	}
 }
