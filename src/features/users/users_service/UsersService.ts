@@ -73,39 +73,33 @@ export default class UsersService {
 		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
 	}> {
 		console.log("1", {id, hairType});
-		try {
-			const user = await this.usersRepository.findOneByOrFail({id});
-			console.log("2", {user});
-			if (
-				hairType.hairType === "wysokoporowate" ||
-				hairType.hairType === "srednioporowate" ||
-				hairType.hairType === "niskoporowate"
-			) {
-				console.log("3");
-				const userHairTypeEntity = await this.userHairTypeRepository.save({
-					userId: user.id,
-					hairType: hairType.hairType,
-					isPublic: hairType.isPublic,
-				});
-				console.log("9", {userHairTypeEntity});
 
-				return {
-					isPublic: userHairTypeEntity.isPublic,
-					hairType: userHairTypeEntity.hairType,
-				};
-			} else {
-				console.log("10");
-				throw new Error("Wrong hair type");
-			}
-		} catch (error) {
-			console.log("11");
-			if (error instanceof EntityNotFoundError) {
-				console.log("12");
-				throw new UsersServiceUserWithGivenIdNotFoundError(id);
-			}
-			console.log("13");
-			throw error;
+		const user = await this.usersRepository.findOneByOrFail({id}).catch((error) => {
+			throw error instanceof EntityNotFoundError
+				? new UsersServiceUserWithGivenIdNotFoundError(id)
+				: error;
+		});
+		console.log("2", {user});
+		if (
+			hairType.hairType !== "wysokoporowate" &&
+			hairType.hairType !== "srednioporowate" &&
+			hairType.hairType !== "niskoporowate"
+		) {
+			console.log("4", {hairType});
+			throw new Error("Wrong hair type");
 		}
+		console.log("3", {user});
+		const userHairTypeEntity = await this.userHairTypeRepository.save({
+			userId: user.id,
+			hairType: hairType.hairType,
+			isPublic: hairType.isPublic,
+		});
+		console.log("9", {userHairTypeEntity});
+
+		return {
+			isPublic: userHairTypeEntity.isPublic,
+			hairType: userHairTypeEntity.hairType,
+		};
 	}
 
 	public async getHairType(id: string): Promise<{
