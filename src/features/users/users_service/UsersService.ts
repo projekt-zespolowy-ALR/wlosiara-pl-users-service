@@ -40,7 +40,13 @@ export default class UsersService {
 		}
 	}
 	public async createUser(createUserPayload: CreateUserPayload): Promise<User> {
-		return deentityifyUserEntity(await this.usersRepository.save(createUserPayload));
+		const userEntity = await this.usersRepository.save(createUserPayload);
+		await this.userHairTypeRepository.save({
+			userId: userEntity.id,
+			hairType: null,
+			isPublic: false,
+		});
+		return deentityifyUserEntity(userEntity);
 	}
 
 	public async deleteUserById(id: string): Promise<boolean> {
@@ -66,14 +72,18 @@ export default class UsersService {
 		isPublic: boolean;
 		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
 	}> {
+		console.log("1", {id, hairType});
 		try {
 			const user = await this.usersRepository.findOneByOrFail({id});
+			console.log("2", {user});
 			if (
 				hairType.hairType === "wysokoporowate" ||
 				hairType.hairType === "srednioporowate" ||
 				hairType.hairType === "niskoporowate"
 			) {
+				console.log("3");
 				try {
+					console.log("4");
 					await this.userHairTypeRepository.update(
 						{userId: user.id},
 						{
@@ -81,28 +91,37 @@ export default class UsersService {
 							isPublic: hairType.isPublic,
 						}
 					);
+					console.log("5");
 				} catch (error) {
+					console.log("6", {error});
 					await this.userHairTypeRepository.save({
 						userId: user.id,
 						hairType: hairType.hairType,
 						isPublic: hairType.isPublic,
 					});
+					console.log("7");
 				}
+				console.log("8");
 				const userHairTypeEntity = await this.userHairTypeRepository.findOneByOrFail({
 					userId: user.id,
 				});
+				console.log("9", {userHairTypeEntity});
 
 				return {
 					isPublic: userHairTypeEntity.isPublic,
 					hairType: userHairTypeEntity.hairType,
 				};
 			} else {
+				console.log("10");
 				throw new Error("Wrong hair type");
 			}
 		} catch (error) {
+			console.log("11");
 			if (error instanceof EntityNotFoundError) {
+				console.log("12");
 				throw new UsersServiceUserWithGivenIdNotFoundError(id);
 			}
+			console.log("13");
 			throw error;
 		}
 	}

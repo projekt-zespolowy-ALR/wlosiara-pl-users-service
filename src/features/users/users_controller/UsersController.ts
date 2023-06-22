@@ -10,6 +10,7 @@ import {
 	Put,
 	Query,
 	ValidationPipe,
+	BadRequestException,
 } from "@nestjs/common";
 import UsersService from "../users_service/UsersService.js";
 import PagingOptions from "../../../paging/PagingOptions.js";
@@ -159,6 +160,11 @@ export default class UsersController {
 		} catch (error) {
 			if (error instanceof UsersServiceUserWithGivenIdNotFoundError) {
 				throw new NotFoundException(`User with id "${userId}" not found`);
+			}
+			if (error instanceof Error) {
+				if (error.message === "Invalid hair type") {
+					throw new BadRequestException("Invalid hair type");
+				}
 			}
 			throw error;
 		}
