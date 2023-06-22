@@ -68,14 +68,14 @@ export default class UsersService {
 	}> {
 		try {
 			const user = await this.usersRepository.findOneByOrFail({id});
+			if (user.hairType) {
+				await this.userHairTypeRepository.delete(user.id);
+			}
 			if (
 				hairType.hairType === "wysokoporowate" ||
 				hairType.hairType === "srednioporowate" ||
 				hairType.hairType === "niskoporowate"
 			) {
-				// await this.usersRepository.update(id, user);
-				// // save(user);
-				// return deentityifyUserEntity(user);
 				const userHairTypeEntity = await this.userHairTypeRepository.save({
 					hairType: hairType.hairType,
 					isPublic: hairType.isPublic,
