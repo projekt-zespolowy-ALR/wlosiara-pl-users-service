@@ -95,4 +95,25 @@ export default class UsersService {
 			throw error;
 		}
 	}
+
+	public async getHairType(id: string): Promise<{
+		isPublic: boolean;
+		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
+	}> {
+		try {
+			const user = await this.usersRepository.findOneByOrFail({id});
+			const userHairTypeEntity = await this.userHairTypeRepository.findOneByOrFail({
+				userId: user.id,
+			});
+			return {
+				isPublic: userHairTypeEntity.isPublic,
+				hairType: userHairTypeEntity.hairType,
+			};
+		} catch (error) {
+			if (error instanceof EntityNotFoundError) {
+				throw new UsersServiceUserWithGivenIdNotFoundError(id);
+			}
+			throw error;
+		}
+	}
 }

@@ -13,6 +13,9 @@ export default class UserHairTypeEntity {
 	@Column({name: "is_public", type: "boolean"})
 	public readonly isPublic!: boolean;
 
+	@Column({name: "user_id", type: "uuid"})
+	public readonly userId!: string;
+
 	@Column({name: "hair_type", type: "text", nullable: true})
 	public hairType!: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
 }
