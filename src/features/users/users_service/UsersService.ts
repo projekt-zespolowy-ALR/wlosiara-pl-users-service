@@ -80,6 +80,9 @@ export default class UsersService {
 				: error;
 		});
 		console.log("2", {user});
+		if (user.hairType) {
+			await this.userHairTypeRepository.delete(user.id);
+		}
 		if (
 			hairType.hairType !== "wysokoporowate" &&
 			hairType.hairType !== "srednioporowate" &&
