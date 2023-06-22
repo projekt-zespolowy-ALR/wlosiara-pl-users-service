@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE user_hair_types (
     id UUID DEFAULT uuid_generate_v4() NOT NULL,
     user_id UUID NOT NULL UNIQUE,
-    hair_type TEXT NOT NULL,
+    hair_type TEXT,
     is_public BOOLEAN NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id)
