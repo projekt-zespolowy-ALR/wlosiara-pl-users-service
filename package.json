@@ -1,6 +1,6 @@
 {
 	"name": "wlosiara-pl-users-service",
-	"version": "0.3.10",
+	"version": "0.3.11",
 	"description": "wlosiara.pl - Products service",
 	"private": true,
 	"main": "./dist/src/main.js",
