@@ -79,10 +79,6 @@ export default class UsersService {
 				? new UsersServiceUserWithGivenIdNotFoundError(id)
 				: error;
 		});
-		console.log("2", {user});
-		if (user.hairType) {
-			await this.userHairTypeRepository.delete(user.id);
-		}
 		if (
 			hairType.hairType !== "wysokoporowate" &&
 			hairType.hairType !== "srednioporowate" &&
@@ -92,11 +88,18 @@ export default class UsersService {
 			throw new Error("Wrong hair type");
 		}
 		console.log("3", {user});
-		const userHairTypeEntity = await this.userHairTypeRepository.save({
+		await this.userHairTypeRepository.upsert(
+			{
+				userId: user.id,
+				hairType: hairType.hairType,
+				isPublic: hairType.isPublic,
+			},
+			["userId"]
+		);
+		const userHairTypeEntity = await this.userHairTypeRepository.findOneByOrFail({
 			userId: user.id,
-			hairType: hairType.hairType,
-			isPublic: hairType.isPublic,
 		});
+
 		console.log("9", {userHairTypeEntity});
 
 		return {
