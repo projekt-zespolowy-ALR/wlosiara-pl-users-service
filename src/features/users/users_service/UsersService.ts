@@ -82,28 +82,10 @@ export default class UsersService {
 				hairType.hairType === "niskoporowate"
 			) {
 				console.log("3");
-				try {
-					console.log("4");
-					await this.userHairTypeRepository.update(
-						{userId: user.id},
-						{
-							hairType: hairType.hairType,
-							isPublic: hairType.isPublic,
-						}
-					);
-					console.log("5");
-				} catch (error) {
-					console.log("6", {error});
-					await this.userHairTypeRepository.save({
-						userId: user.id,
-						hairType: hairType.hairType,
-						isPublic: hairType.isPublic,
-					});
-					console.log("7");
-				}
-				console.log("8");
-				const userHairTypeEntity = await this.userHairTypeRepository.findOneByOrFail({
+				const userHairTypeEntity = await this.userHairTypeRepository.save({
 					userId: user.id,
+					hairType: hairType.hairType,
+					isPublic: hairType.isPublic,
 				});
 				console.log("9", {userHairTypeEntity});
 
