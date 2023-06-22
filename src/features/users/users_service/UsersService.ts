@@ -81,6 +81,7 @@ export default class UsersService {
 					isPublic: hairType.isPublic,
 					user,
 				});
+				console.log(userHairTypeEntity);
 				return {
 					isPublic: userHairTypeEntity.isPublic,
 					hairType: userHairTypeEntity.hairType,
@@ -102,9 +103,11 @@ export default class UsersService {
 	}> {
 		try {
 			const user = await this.usersRepository.findOneByOrFail({id});
+			console.log(user);
 			const userHairTypeEntity = await this.userHairTypeRepository.findOneByOrFail({
 				userId: user.id,
 			});
+			console.log(userHairTypeEntity);
 			return {
 				isPublic: userHairTypeEntity.isPublic,
 				hairType: userHairTypeEntity.hairType,
