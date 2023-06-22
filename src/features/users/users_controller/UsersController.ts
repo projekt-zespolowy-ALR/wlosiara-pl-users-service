@@ -155,4 +155,28 @@ export default class UsersController {
 			throw error;
 		}
 	}
+
+	@Get("/users/:userId/hair-type")
+	public async getHairType(
+		@Param(
+			"userId",
+			new ParseUUIDPipe({
+				version: "4",
+			})
+		)
+		userId: string
+	): Promise<{
+		isPublic: boolean;
+		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
+	}> {
+		try {
+			const hairEntity = await this.usersService.getHairType(userId);
+			return hairEntity;
+		} catch (error) {
+			if (error instanceof UsersServiceUserWithGivenIdNotFoundError) {
+				throw new NotFoundException(`User with id "${userId}" not found`);
+			}
+			throw error;
+		}
+	}
 }
