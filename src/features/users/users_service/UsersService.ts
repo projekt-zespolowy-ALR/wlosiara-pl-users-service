@@ -10,12 +10,19 @@ import deentityifyUserEntity from "./deentityifyUserEntity.js";
 import type CreateUserPayload from "./CreateUserPayload.js";
 import UsersServiceUserWithGivenIdNotFoundError from "./UsersServiceUserWithGivenIdNotFoundError.js";
 import type {EditUserPayload} from "./EditUserPayload.js";
+import type SetUserHairTypeRequestBody from "../users_controller/SetUserHairTypeRequestBody.js";
+import UserHairTypeEntity from "./UserHairTypeEntity.js";
 
 @Injectable()
 export default class UsersService {
 	private readonly usersRepository: Repository<UserEntity>;
-	public constructor(@InjectRepository(UserEntity) usersRepository: Repository<UserEntity>) {
+	private readonly userHairTypeRepository: Repository<UserHairTypeEntity>;
+	public constructor(
+		@InjectRepository(UserEntity) usersRepository: Repository<UserEntity>,
+		@InjectRepository(UserHairTypeEntity) hairTypeRepository: Repository<UserHairTypeEntity>
+	) {
 		this.usersRepository = usersRepository;
+		this.userHairTypeRepository = hairTypeRepository;
 	}
 	public async getUsers(pagingOptions: PagingOptions): Promise<Page<User>> {
 		return (await paginatedFindAndCount(this.usersRepository, pagingOptions)).map(
@@ -51,5 +58,41 @@ export default class UsersService {
 		const editUserPayload = arg1;
 		await this.usersRepository.update(userId, editUserPayload);
 		return deentityifyUserEntity(await this.usersRepository.findOneByOrFail({id: userId}));
+	}
+	public async setHairType(
+		id: string,
+		hairType: SetUserHairTypeRequestBody
+	): Promise<{
+		isPublic: boolean;
+		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
+	}> {
+		try {
+			const user = await this.usersRepository.findOneByOrFail({id});
+			if (
+				hairType.hairType === "wysokoporowate" ||
+				hairType.hairType === "srednioporowate" ||
+				hairType.hairType === "niskoporowate"
+			) {
+				// await this.usersRepository.update(id, user);
+				// // save(user);
+				// return deentityifyUserEntity(user);
+				const userHairTypeEntity = await this.userHairTypeRepository.save({
+					hairType: hairType.hairType,
+					isPublic: hairType.isPublic,
+					user,
+				});
+				return {
+					isPublic: userHairTypeEntity.isPublic,
+					hairType: userHairTypeEntity.hairType,
+				};
+			} else {
+				throw new Error("Wrong hair type");
+			}
+		} catch (error) {
+			if (error instanceof EntityNotFoundError) {
+				throw new UsersServiceUserWithGivenIdNotFoundError(id);
+			}
+			throw error;
+		}
 	}
 }

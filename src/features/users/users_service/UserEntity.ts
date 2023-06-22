@@ -1,4 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, OneToOne, type Relation} from "typeorm";
+import UserHairTypeEntity from "./UserHairTypeEntity.js";
 
 @Entity({name: "users"})
 export default class UserEntity {
@@ -10,4 +11,7 @@ export default class UserEntity {
 
 	@Column({name: "avatar_url", type: "text"})
 	public readonly avatarUrl!: string;
+
+	@OneToOne(() => UserHairTypeEntity, (hairType) => hairType.user)
+	public readonly hairType!: Relation<UserHairTypeEntity>;
 }

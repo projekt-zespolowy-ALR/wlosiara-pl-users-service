@@ -18,7 +18,8 @@ import type User from "./User.js";
 import UsersServiceUserWithGivenIdNotFoundError from "../users_service/UsersServiceUserWithGivenIdNotFoundError.js";
 import CreateUserRequestBody from "./CreateUserRequestBody.js";
 import payloadifyCreateUserRequestBody from "./payloadifyCreateUserRequestBody.js";
-import type {EditUserRequestBody} from "./EditUserRequestBody.js";
+import {EditUserRequestBody} from "./EditUserRequestBody.js";
+import SetUserHairTypeRequestBody from "./SetUserHairTypeRequestBody.js";
 
 @Controller("/")
 export default class UsersController {
@@ -122,5 +123,36 @@ export default class UsersController {
 			userId,
 			payloadifyCreateUserRequestBody(editUserRequestBody)
 		);
+	}
+	@Put("/users/:userId/hair-type")
+	public async setHairType(
+		@Param(
+			"userId",
+			new ParseUUIDPipe({
+				version: "4",
+			})
+		)
+		userId: string,
+		@Body(
+			new ValidationPipe({
+				transform: true, // Transform to instance of CreateCatRequestBody
+				whitelist: true, // Do not allow other properties than those defined in CreateCatRequestBody
+				forbidNonWhitelisted: true, // Throw an error if other properties than those defined in CreateCatRequestBody are present
+			})
+		)
+		hairType: SetUserHairTypeRequestBody
+	): Promise<{
+		isPublic: boolean;
+		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
+	}> {
+		try {
+			const hairEntity = await this.usersService.setHairType(userId, hairType);
+			return hairEntity;
+		} catch (error) {
+			if (error instanceof UsersServiceUserWithGivenIdNotFoundError) {
+				throw new NotFoundException(`User with id "${userId}" not found`);
+			}
+			throw error;
+		}
 	}
 }

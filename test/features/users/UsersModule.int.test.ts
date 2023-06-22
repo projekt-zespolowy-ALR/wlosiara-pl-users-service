@@ -145,7 +145,37 @@ describe("UsersModule", () => {
 				expect(responseJson.items[0]).toHaveProperty("id");
 				expect(typeof responseJson.items[0].id).toBe("string");
 				expect(responseJson.items[0].id).not.toHaveLength(0);
-				expect((({id, ...rest}) => rest)(responseJson.items[0])).toEqual(addUserRequestBody);
+				expect((({id, ...rest}) => rest)(responseJson.items[0])).toEqual({
+					...addUserRequestBody,
+				});
+			});
+
+			test("PUT /users/:id/hair-type", async () => {
+				const addUserRequestBody = {
+					username: "test2",
+					avatarUrl: "test2",
+				} as const;
+
+				const addUserResponse = await app.inject({
+					method: "POST",
+					url: "/v1/users",
+					payload: addUserRequestBody,
+				});
+
+				const response = await app.inject({
+					method: "PUT",
+					url: `/v1/users/${addUserResponse.json().id}/hair-type`,
+					payload: {
+						hairType: "wysokoporowate",
+						isPublic: true,
+					},
+				});
+
+				expect(response.statusCode).toBe(200);
+				expect(response.json()).toEqual({
+					isPublic: true,
+					hairType: "wysokoporowate",
+				});
 			});
 		});
 	});
