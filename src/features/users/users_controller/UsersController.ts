@@ -20,7 +20,7 @@ import CreateUserRequestBody from "./CreateUserRequestBody.js";
 import payloadifyCreateUserRequestBody from "./payloadifyCreateUserRequestBody.js";
 import {EditUserRequestBody} from "./EditUserRequestBody.js";
 import SetUserHairTypeRequestBody from "./SetUserHairTypeRequestBody.js";
-
+import latinize from "latinize";
 @Controller("/")
 export default class UsersController {
 	private readonly usersService: UsersService;
@@ -146,7 +146,15 @@ export default class UsersController {
 		hairType: "wysokoporowate" | "srednioporowate" | "niskoporowate" | null;
 	}> {
 		try {
-			const hairEntity = await this.usersService.setHairType(userId, hairType);
+			const type = latinize(hairType.hairType.trim().toLowerCase());
+			if (type !== "wysokoporowate" && type !== "srednioporowate" && type !== "niskoporowate") {
+				throw new Error("Invalid hair type");
+			}
+			const hairTypeSanitized = {
+				...hairType,
+				hairType: type,
+			};
+			const hairEntity = await this.usersService.setHairType(userId, hairTypeSanitized);
 			return hairEntity;
 		} catch (error) {
 			if (error instanceof UsersServiceUserWithGivenIdNotFoundError) {
