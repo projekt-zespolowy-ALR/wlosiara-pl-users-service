@@ -13,7 +13,7 @@ export default class UserHairTypeEntity {
 	@Column({name: "is_public", type: "boolean"})
 	public readonly isPublic!: boolean;
 
-	@Column({name: "user_id", type: "uuid"})
+	@Column({name: "user_id", type: "uuid", unique: true})
 	public readonly userId!: string;
 
 	@Column({name: "hair_type", type: "text", nullable: true})
